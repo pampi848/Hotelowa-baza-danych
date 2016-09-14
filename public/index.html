@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+    
+    <head>
+        <meta charset="utf-8">
+        <title>Interfejs hotelowy</title>
+        <meta name="description" content="Intefejs zamówień hotelowych">
+        <link rel="stylesheet" href="style.css">
+    </head>
+    <body>
+        <a href="guests.php"><button>Goście</button></a>
+        <a href="services.php"><button>Usługi</button></a>
+        <a href="rooms.php"><button>Pokoje</button></a>
+        <a href="rabat.php"><button>Rabaty</button></a>
+        <hr>
+        
+        <form id="reservations" action="reservation.php" method="get">
+            <h4>Rezerwacja</h4>
+            Od <input type="datetime-local" name="start"> Do <input type="datetime-local" name="end">
+            <input type="submit" value="search">
+        </form>
+        <hr>
+        <form id="rooms" action="room.php" method="get">
+            <h4>Informacje o pokoju</h4>
+            Od <input type="datetime-local" name="start"> Do <input type="datetime-local" name="end">
+            <input type="submit" value="search">
+        </form>
+        <hr>
+        <form id="guests" action="guest.php" method="get">
+            <h4>Informacje o gościu</h4>
+            <input type="text" name="name" placeholder="Imię"> 
+            <input type="text" name="surname" placeholder="Nazwisko">
+            <input type="number" name="client_number" placeholder="Numer klienta">
+            <input type="number" name="room_number" placeholder="Numer pokoju">
+            <input type="submit" value="Szukaj">
+        </form>
+        <hr>
+        <form id="payment" action="payment.php" method="get">
+            <h4>Płatność</h4>
+            <input type="text" name="name" placeholder="Imię" required> 
+            <input type="text" name="surname" placeholder="Nazwisko" required>
+            <input type="number" name="client_number" placeholder="Numer klienta" required>
+            <input type="number" name="room_number" placeholder="Numer pokoju" required>
+            <input type="submit" value="Szukaj">
+        </form>
+        <hr>
+    </body>
+    
+</html>
