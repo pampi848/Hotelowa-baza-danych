@@ -1,6 +1,7 @@
 {
   "name": "hotelowa-baza-danych",
   "version": "1.0.0",
+  "private": true,
   "description": "Projekt hotelowej bazy danych",
   "main": "index.js",
   "scripts": {
@@ -10,13 +11,14 @@
     "type": "git",
     "url": "git+https://github.com/pampi848/Hotelowa-baza-danych.git"
   },
-  "author": "Adam&Michał",
+  "authors": "Adam&Michał",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/pampi848/Hotelowa-baza-danych/issues"
   },
   "homepage": "https://github.com/pampi848/Hotelowa-baza-danych#readme",
   "dependencies": {
-    "express": "^4.14.0"
+    "express": "^4.14.0",
+    "express-handlebars": "^3.0.0"
   }
 }
