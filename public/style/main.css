@@ -1,8 +1,20 @@
 body{
     margin:0!important;
+    background-color: black;
+    /* Background pattern from subtlepatterns.com */
+    background-image: url('/img/leather_1.png');
 }
 #logo{
     width: 50px;
     height: 50px;
     margin-right:5px;
+}
+#content{
+    background-color: rgba(255, 255, 255, 0.7);
+    border-radius: 10px;
+}
+#nav{
+    border-radius: 0px;
+    padding-right: 5%;
+    padding-left: 5%;
 }
