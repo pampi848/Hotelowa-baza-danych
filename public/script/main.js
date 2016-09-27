@@ -5,15 +5,15 @@
 $(function() {
     $('#logo')
         .mouseover(function() {
-            var src = "/img/logo-inverse.png";
+            var src = "/img/logo-hover.png";
             $(this).attr("src", src);
         })
         .mouseout(function() {
-            var src = "/img/logo-gray.png";
+            var src = "/img/logo.png";
             $(this).attr("src", src);
         })
         .click(function() {
-            var src = "/img/logo-yellow.png";
+            var src = "/img/logo-clicked.png";
             $(this).attr("src", src);
         });
 });
