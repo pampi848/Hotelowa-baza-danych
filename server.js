@@ -31,6 +31,11 @@ app.get('/rooms', function (req, res){
     return res.render('roomList');
 });
 
+app.post('/rooms', function (req, res) {
+    console.log(req.body.login);
+    return res.render('roomList');
+});
+
 //
 app.get('/junk', function () {
     console.log('Tried to access /junk');
