@@ -78,12 +78,14 @@ app.post('/process', function (req, res){
 });
 
 app.get('/clientAdd', function (req, res) {
-   var now = new Date();
-    res.render('clientAdd', {
+    var now = new Date();
+    var options = {
         year: now.getFullYear(),
         month: now.getMonth(),
         clientAdd_active: 'active'
-    });
+    };
+    if(req.query.messages) options.messages = req.query.messages;
+    return res.render('clientAdd', options);
 });
 
 app.post('/clientAdd/:year/:month', function (req, res) {
@@ -110,12 +112,46 @@ app.post('/clientAdd/:year/:month', function (req, res) {
         console.log(file);
     });
 
-    var query = connection.query('insert into klient ?', req.body, function (err, result) {
-        console.log(query.sql);
+
+    req.body.birthday = new Date(req.body.birthday);
+    req.body.pesel = parseInt(req.body.pesel);
+    req.body.home = parseInt(req.body.home);
+    req.body.flat = parseInt(req.body.flat);
+
+    if(validClientAdd(req.body) === false) return res.redirect(303, '/error');
+
+    var query = connection.query('INSERT INTO klient SET ?', req.body, function (err, result) {
+        if(err){
+            console.error(err);
+            return;
+        }
+        console.error(result);
     });
 
-    res.redirect(303, '/thankyou');
+    var messages = validClientAdd(req.body);
+    res.redirect(303, '/clientAdd/?'+messages);
 });
+
+function validClientAdd(object){
+    if(typeof(object) != 'object') return false;
+
+    for(var foo in object){
+        if((foo != 'name') && (foo != 'pesel') && (foo != 'lastName') && (foo != 'city') && (foo != 'postCode') && (foo != 'street') && (foo != 'home') && (foo != 'flat') && (foo != 'email') && (foo != 'birthday') && (foo != 'phone') && (foo != 'photo')) return false;
+    }
+
+    var messages = '';
+    console.log( String(object.home).length >= 0);
+    messages += (typeof(object.name) === 'string' && object.name.length >= 3) ? '' : 'messages[]=Imię powinno zawierać minimum 3 znaki!&';
+    messages += (typeof(object.lastName) === 'string' && object.lastName.length >= 3) ? '' : 'messages[]=Nazwisko powinno zawierać minimum 3 znaki!&';
+    messages += (typeof(object.pesel) === 'number' && String(object.pesel).length== 11) ? '' : 'messages[]=Pesel pwinien mieć równo 11 znaków!&';
+    messages += (typeof(object.postCode) === 'string' && object.postCode.length == 6) ? '' : 'messages[]=Kod pocztowy powinien zawierać 6 znaków!&';
+    messages += (typeof(object.street) === 'string' && object.street.length >= 3) ? '' : 'messages[]=Ulica powinna zawierać minimum 3 znaki!&';
+    messages += (typeof(object.home) === 'number' && object.home >= 0) ? '' : 'messages[]=Numer domu nie może być mniejszy od 0!&';
+    messages += (typeof object.birthday.getMonth === 'function') ? '' : 'messages[]=Podane urodziny nie są datą!&';
+
+    return messages;
+}
+
 //
 // app.use(session({
 //     resave: false,
