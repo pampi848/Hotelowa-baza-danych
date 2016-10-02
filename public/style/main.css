@@ -24,3 +24,6 @@ body{
 label{
     text-align: center!important;
 }
+#labelFlat{
+    position: fixed;
+}

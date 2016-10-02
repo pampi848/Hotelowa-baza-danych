@@ -69,6 +69,7 @@ app.get('/phpmyadmin', function (req, res) {
 });
 
 app.post('/process', function (req, res){
+    console.log(req.body);
     console.log('Form : ' + req.query.form);
     console.log('CSRF token : ' + req.body._csrf);
     console.log('Email : ' + req.body.email);
@@ -88,8 +89,24 @@ app.get('/clientAdd', function (req, res) {
 app.post('/clientAdd/:year/:month', function (req, res) {
     var form = new formidable.IncomingForm();
 
+    console.log(req.body);
+    console.log('Form : ' + req.query.form);
+    console.log('Name : ' + req.body.name);
+    console.log('Last Name : ' + req.body.lastName);
+    console.log('City : ' + req.body.city);
+    console.log('Post Code : ' + req.body.postCode);
+    console.log('Street : ' + req.body.street);
+    console.log('Home : ' + req.body.home);
+    console.log('Flat : ' + req.body.flat);
+    console.log('Email : ' + req.body.email);
+    console.log('Birthday : ' + req.body.birthday);
+    console.log('Phone : ' + req.body.phone);
+    console.log('PESEL : ' + req.body.pesel);
+    console.log('Photo name : ' + req.body.photo);
+
     form.parse(req, function (err, fields, file) {
-        if(err) return res.redirect(303, '/error');
+        if(err) return res.redirect(404, '/error');
+
         console.log('Received File');
         console.log(file);
         res.redirect(303, '/thankyou');
