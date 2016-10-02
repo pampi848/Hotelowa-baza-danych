@@ -25,5 +25,5 @@ label{
     text-align: center!important;
 }
 #labelFlat{
-    position: fixed;
+    position: absolute;
 }

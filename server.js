@@ -89,7 +89,6 @@ app.get('/clientAdd', function (req, res) {
 app.post('/clientAdd/:year/:month', function (req, res) {
     var form = new formidable.IncomingForm();
 
-    console.log(req.body);
     console.log('Form : ' + req.query.form);
     console.log('Name : ' + req.body.name);
     console.log('Last Name : ' + req.body.lastName);
@@ -109,8 +108,13 @@ app.post('/clientAdd/:year/:month', function (req, res) {
 
         console.log('Received File');
         console.log(file);
-        res.redirect(303, '/thankyou');
     });
+
+    var query = connection.query('insert into klient ?', req.body, function (err, result) {
+        console.log(query.sql);
+    });
+
+    res.redirect(303, '/thankyou');
 });
 //
 // app.use(session({
