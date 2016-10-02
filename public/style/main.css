@@ -21,3 +21,6 @@ body{
 .zakladki:active{
     color: #98b1c4!important;
 }
+label{
+    text-align: center!important;
+}
