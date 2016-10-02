@@ -15,7 +15,7 @@ var connection = mysql.createConnection({
     host: 'localhost',
     user: 'root',
     password: '',
-    database: 'Hotelowa-baza-danych'
+    database: 'hotelowa-baza-danych'
 });
 connection.connect(function (err) {
     if(err) return console.error(err);
