@@ -1,4 +1,4 @@
-<form class="form-horizontal" role="form" method="POST"
+<form class="form-horizontal" role="form" method="POST" enctype="multipart/form-data"
       action="/clientAdd/{{year}}/{{month}}/?form=clientAdd">
     <!--enctype="multipart/form-data" -- form -->
     {{>incorrectForm}}
@@ -59,7 +59,7 @@
         <label for="fieldFlat" id="labelFlat" class="col-sm-0 control-label">/
         </label>
         <div class="col-sm-2">
-            <input type="number" required class="form-control" id="fieldFlat" name="flat">
+            <input type="number" class="form-control" id="fieldFlat" name="flat">
         </div>
     </div>
     <div class="form-group">

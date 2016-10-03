@@ -7,6 +7,7 @@ var session = require('express-session');
 var parseurl = require('parseurl');
 var fs = require('fs');
 var mysql = require('mysql');
+var upload = require('formidable-upload');
 
 var app = express();
 
@@ -18,7 +19,10 @@ var connection = mysql.createConnection({
     database: 'hotelowa-baza-danych'
 });
 connection.connect(function (err) {
-    if(err) return console.error(err);
+    if(err) {
+        if(err.code == 'ECONNREFUSED') console.error('Nieudana próba połączenia z bazą danych.');
+        return console.error(err);
+    }
 });
 // End of Database Connection
 
@@ -51,8 +55,18 @@ app.get('/about', function (req, res){
     return res.render('about', { about_active: 'active'});
 });
 
-app.get('/rooms', function (req, res){
-    return res.render('roomList', { list_active: 'active'});
+app.get('/clientList',function (req, res){
+    var sqlquery = connection.query('SELECT * FROM `clients`',function (err, result) {
+        if(err){
+            console.error(err);
+            return res.redirect(505,'/505');
+        }
+        var options = {
+            clientList_active: 'active',
+            clients: result
+        };
+        return res.render('clientList', options);
+    });
 });
 
 app.get('/contact', function (req, res) {
@@ -85,6 +99,7 @@ app.get('/clientAdd', function (req, res) {
         clientAdd_active: 'active'
     };
     if(req.query.messages) options.messages = req.query.messages;
+    if(req.query.alertType) options.alertType = req.query.alertType;
     return res.render('clientAdd', options);
 });
 
@@ -104,50 +119,61 @@ app.post('/clientAdd/:year/:month', function (req, res) {
     console.log('Phone : ' + req.body.phone);
     console.log('PESEL : ' + req.body.pesel);
     console.log('Photo name : ' + req.body.photo);
-
-    form.parse(req, function (err, fields, file) {
-        if(err) return res.redirect(404, '/error');
-
-        console.log('Received File');
-        console.log(file);
-    });
-
+    var created = new Date;
+    console.log('Created : ' + created);
+    req.body.created = created;
 
     req.body.birthday = new Date(req.body.birthday);
-    req.body.pesel = parseInt(req.body.pesel);
     req.body.home = parseInt(req.body.home);
-    req.body.flat = parseInt(req.body.flat);
+    if(req.body.flat != '')req.body.flat = parseInt(req.body.flat);
 
-    if(validClientAdd(req.body) === false) return res.redirect(303, '/error');
-
-    var query = connection.query('INSERT INTO klient SET ?', req.body, function (err, result) {
-        if(err){
-            console.error(err);
-            return;
-        }
-        console.error(result);
-    });
 
     var messages = validClientAdd(req.body);
-    res.redirect(303, '/clientAdd/?'+messages);
+    if(messages === false) return res.redirect(303, '/error');
+
+    var sqlquery = connection.query('INSERT INTO `clients` SET ?', req.body, function (err, result) {
+        if(err){
+            console.error(err);
+            return res.redirect(505,'/505');
+        }
+        //console.log(result);
+    });
+
+    console.log(req.files);
+    //upload().accept('image/jpeg').to('public/img/photos/').exec(req.files.photo, function(err, file) {});
+    // fs.readFile(req.files.photo.path, function (err, data) {
+    //     var newPath = __dirname + '/public/img/photos/' + req.files.theFile.name;
+    //     fs.writeFile(newPath, data, function (err) {
+    //         if(err){
+    //         console.error(err);
+    //         return res.redirect(505,'/505');
+    //     }
+    //         console.log('Saved file: ' + newPath);
+    //     });
+    // });
+
+    if(messages == '')messages = 'messages[]=Pomyślnie dodano klienta!&alertType=alert-success';
+    else messages += 'alertType=alert-danger';
+    return res.redirect(303, '/clientAdd/?'+messages);
 });
 
 function validClientAdd(object){
     if(typeof(object) != 'object') return false;
 
     for(var foo in object){
-        if((foo != 'name') && (foo != 'pesel') && (foo != 'lastName') && (foo != 'city') && (foo != 'postCode') && (foo != 'street') && (foo != 'home') && (foo != 'flat') && (foo != 'email') && (foo != 'birthday') && (foo != 'phone') && (foo != 'photo')) return false;
+        if((foo != 'name') && (foo != 'pesel') && (foo != 'lastName') && (foo != 'city') && (foo != 'postCode') && (foo != 'street') && (foo != 'home') && (foo != 'flat') && (foo != 'email') && (foo != 'birthday') && (foo != 'phone') && (foo != 'photo') && (foo != 'created')) return false;
     }
 
     var messages = '';
-    console.log( String(object.home).length >= 0);
     messages += (typeof(object.name) === 'string' && object.name.length >= 3) ? '' : 'messages[]=Imię powinno zawierać minimum 3 znaki!&';
     messages += (typeof(object.lastName) === 'string' && object.lastName.length >= 3) ? '' : 'messages[]=Nazwisko powinno zawierać minimum 3 znaki!&';
-    messages += (typeof(object.pesel) === 'number' && String(object.pesel).length== 11) ? '' : 'messages[]=Pesel pwinien mieć równo 11 znaków!&';
+    messages += (typeof(object.pesel) === 'string' && String(object.pesel).length== 11) ? '' : 'messages[]=Pesel powinien mieć równo 11 znaków!&';
     messages += (typeof(object.postCode) === 'string' && object.postCode.length == 6) ? '' : 'messages[]=Kod pocztowy powinien zawierać 6 znaków!&';
     messages += (typeof(object.street) === 'string' && object.street.length >= 3) ? '' : 'messages[]=Ulica powinna zawierać minimum 3 znaki!&';
     messages += (typeof(object.home) === 'number' && object.home >= 0) ? '' : 'messages[]=Numer domu nie może być mniejszy od 0!&';
     messages += (typeof object.birthday.getMonth === 'function') ? '' : 'messages[]=Podane urodziny nie są datą!&';
+    var arrayPhoto = object.photo.split('.');
+    messages += (arrayPhoto[(arrayPhoto.length-1)] == 'jpg' || arrayPhoto[(arrayPhoto.length-1)] == 'JPEG' || arrayPhoto[(arrayPhoto.length-1)] == 'png') ? '' : 'messages[]=Przyjmujemy tylko pliki z rozszerzeniem *.jpg oraz *.png!&';
 
     return messages;
 }
