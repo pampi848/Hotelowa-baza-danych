@@ -7,6 +7,8 @@ var session = require('express-session');
 var parseurl = require('parseurl');
 var fs = require('fs');
 var mysql = require('mysql');
+var multer  = require('multer');
+var upload = multer({ dest: 'uploads/' });
 
 var app = express();
 
@@ -54,7 +56,7 @@ app.get('/about', function (req, res){
     return res.render('about', { about_active: 'active'});
 });
 
-app.get('/clientList',function (req, res){
+app.get('/clientsList',function (req, res){
     var sqlquery = connection.query('SELECT * FROM `clients`',function (err, result) {
         if(err){
             console.error(err);
@@ -64,13 +66,43 @@ app.get('/clientList',function (req, res){
             clientList_active: 'active',
             clients: result
         };
-        return res.render('clientList', options);
+        if(req.query.messages) options.messages = req.query.messages;
+        if(req.query.alertType) options.alertType = req.query.alertType;
+        return res.render('clientsList', options);
+    });
+});
+app.get('/roomsList',function (req, res){
+    var sqlquery = connection.query('SELECT * FROM `rooms`',function (err, result) {
+        if(err){
+            console.error(err);
+            return res.redirect(505,'/505');
+        }
+        var options = {
+            roomsList_active: 'active',
+            rooms: result
+        };
+        if(req.query.messages) options.messages = req.query.messages;
+        if(req.query.alertType) options.alertType = req.query.alertType;
+        return res.render('roomsList', options);
+    });
+});
+app.get('/servicesList',function (req, res){
+    var sqlquery = connection.query('SELECT * FROM `services`',function (err, result) {
+        if(err){
+            console.error(err);
+            return res.redirect(505,'/505');
+        }
+        var options = {
+            servicesList_active: 'active',
+            services: result
+        };
+        if(req.query.messages) options.messages = req.query.messages;
+        if(req.query.alertType) options.alertType = req.query.alertType;
+        return res.render('servicesList', options);
     });
 });
 
-app.get('/contact', function (req, res) {
-    return res.render('contact', { csrf: 'CSRF token here', contact_active: 'active'});
-});
+
 
 app.get('/thankyou', function (req, res) {
     return res.render('thankyou');
@@ -91,10 +123,7 @@ app.post('/process', function (req, res){
 });
 
 app.get('/clientAdd', function (req, res) {
-    var now = new Date();
     var options = {
-        year: now.getFullYear(),
-        month: now.getMonth(),
         clientAdd_active: 'active'
     };
     if(req.query.messages) options.messages = req.query.messages;
@@ -102,8 +131,32 @@ app.get('/clientAdd', function (req, res) {
     return res.render('clientAdd', options);
 });
 
-app.post('/clientAdd/:year/:month', function (req, res) {
+app.get('/roomAdd', function (req, res) {
+    var options = {
+        roomAdd_active: 'active'
+    };
+    if(req.query.messages) options.messages = req.query.messages;
+    if(req.query.alertType) options.alertType = req.query.alertType;
+    return res.render('roomAdd', { roomAdd_active: 'active'});
+});
+app.get('/serviceAdd', function (req, res) {
+    var options = {
+        serviceAdd_active: 'active'
+    };
+    if(req.query.messages) options.messages = req.query.messages;
+    if(req.query.alertType) options.alertType = req.query.alertType;
+    return res.render('serviceAdd', { serviceAdd_active: 'active'});
+});
+
+app.post('/clientAdd', upload.single('photo'), function (req, res) {
     var form = new formidable.IncomingForm();
+
+    form.parse(req, function (err, fields, file) {
+        if(err) return res.redirect(404, '/error');
+
+        console.log('Received File');
+        console.log(file);
+    });
 
     console.log('Form : ' + req.query.form);
     console.log('Name : ' + req.body.name);
@@ -122,13 +175,6 @@ app.post('/clientAdd/:year/:month', function (req, res) {
     console.log('Created : ' + created);
     req.body.created = created;
 
-    form.parse(req, function (err, fields, file) {
-        if(err) return res.redirect(404, '/error');
-
-        console.log('Received File');
-        console.log(file);
-    });
-
     req.body.birthday = new Date(req.body.birthday);
     req.body.home = parseInt(req.body.home);
     if(req.body.flat != '')req.body.flat = parseInt(req.body.flat);
@@ -137,30 +183,25 @@ app.post('/clientAdd/:year/:month', function (req, res) {
     var messages = validClientAdd(req.body);
     if(messages === false) return res.redirect(303, '/error');
 
+    console.log("file "+req.files);
+
+    if(messages == '') {
+        messages = 'messages[]=Pomyślnie dodano klienta!&alertType=alert-success';
+        var location = '/clientsList/?';
+    }
+    else {
+        messages += 'alertType=alert-danger';
+        var location = '/clientAdd/?';
+    }
+
     var sqlquery = connection.query('INSERT INTO `clients` SET ?', req.body, function (err, result) {
         if(err){
             console.error(err);
             return res.redirect(505,'/505');
         }
-        //console.log(result);
     });
 
-    //console.log(req.files);
-    //upload().accept('image/jpeg').to('public/img/photos/').exec(req.files.photo, function(err, file) {});
-    // fs.readFile(req.files.photo.path, function (err, data) {
-    //     var newPath = __dirname + '/public/img/photos/' + req.files.theFile.name;
-    //     fs.writeFile(newPath, data, function (err) {
-    //         if(err){
-    //         console.error(err);
-    //         return res.redirect(505,'/505');
-    //     }
-    //         console.log('Saved file: ' + newPath);
-    //     });
-    // });
-
-    if(messages == '')messages = 'messages[]=Pomyślnie dodano klienta!&alertType=alert-success';
-    else messages += 'alertType=alert-danger';
-    return res.redirect(303, '/clientAdd/?'+messages);
+    return res.redirect(303, location + messages);
 });
 
 function validClientAdd(object){
@@ -179,38 +220,119 @@ function validClientAdd(object){
     messages += (typeof(object.home) === 'number' && object.home >= 0) ? '' : 'messages[]=Numer domu nie może być mniejszy od 0!&';
     messages += (typeof object.birthday.getMonth === 'function') ? '' : 'messages[]=Podane urodziny nie są datą!&';
     console.log(object);
-    var arrayPhoto = object.photo.split('.');
-    messages += (arrayPhoto[(arrayPhoto.length - 1)] == 'jpg' || arrayPhoto[(arrayPhoto.length - 1)] == 'JPEG' || arrayPhoto[(arrayPhoto.length - 1)] == 'png') ? '' : 'messages[]=Przyjmujemy tylko pliki z rozszerzeniem *.jpg oraz *.png!&';
+    if(typeof(object.photo) == 'string') {
+        var arrayPhoto = object.photo.split('.');
+        messages += (arrayPhoto[(arrayPhoto.length - 1)] == 'jpg' || arrayPhoto[(arrayPhoto.length - 1)] == 'JPEG' || arrayPhoto[(arrayPhoto.length - 1)] == 'png') ? '' : '&messages[]=Przyjmujemy tylko pliki z rozszerzeniem *.jpg oraz *.png!';
+    }
+        return messages;
+}
+app.post('/roomAdd', function (req, res) {
+
+    console.log('Form : ' + req.query.form);
+    console.log('Number : ' + req.body.number);
+    console.log('Count of People : ' + req.body.countOfPeople);
+    console.log('Type : ' + req.body.type);
+    console.log('Price/day : ' + req.body.price);
+    console.log('Description : ' + req.body.description);
+
+    req.body.number = parseInt(req.body.number);
+    req.body.countOfPeople = parseInt(req.body.countOfPeople);
+    req.body.price = parseFloat(req.body.price);
+
+    var messages = validRoomAdd(req.body);
+
+    var created = new Date;
+    console.log('Created : ' + created);
+    req.body.created = created;
+
+    if(messages === false) return res.redirect(303, '/error');
+
+
+    if(messages == '') {
+        messages = 'messages[]=Pomyślnie dodano pokój!&alertType=alert-success';
+        var location = '/roomsList/?';
+    }
+    else {
+        messages += 'alertType=alert-danger';
+        var location = '/roomAdd/?';
+    }
+
+    var sqlquery = connection.query('INSERT INTO `rooms` SET ?', req.body, function (err, result) {
+        if(err){
+            console.error(err);
+            return res.redirect(505,'/505');
+        }
+    });
+
+    return res.redirect(303, location + messages);
+});
+
+function validRoomAdd(object){
+    if(typeof(object) != 'object') return false;
+
+    for(var foo in object){
+        if((foo != 'number') && (foo != 'countOfPeople') && (foo != 'type') && (foo != 'price') && (foo != 'description')) return false;
+    }
+
+    var messages = '';
+    messages += (typeof(object.number) === 'number') ? '' : 'messages[]=Number musi być liczbą!&';
+    messages += (typeof(object.countOfPeople) === 'number') ? '' : 'messages[]=Liczba osób musi być tekstem!&';
+    messages += (typeof(object.type) === 'string') ? '' : 'messages[]=Typ musi być tekstem!&';
+    messages += (typeof(object.price) === 'number') ? '' : 'messages[]=Cena musi być liczbą!&';
+    messages += (typeof(object.description) === 'string') ? '' : 'messages[]=Opis musi być tekstem!&';
+
     return messages;
 }
+app.post('/serviceAdd', function (req, res) {
 
-//
-// app.use(session({
-//     resave: false,
-//     saveUninitialized: true,
-//     secret: credentials.cookieSecret
-// }));
-//
-// app.use(function (req, res, next) {
-//     var views = req.session.views;
-//
-//     if(!views){
-//         views = req.session.views = {};
-//     }
-//     var pathname = parseurl(req).pathname;
-//     views[pathname] = (views[pathname] || 0) +1;
-//
-//     next();
-// });
-//
-// app.get('/viewcount', function (req, res, next) {
-//     res.send('You viewed this page ' + req.session.views['/viewcount'] + ' times');
-// });
-//
-// app.get('/junk', function () {
-//     console.log('Tried to access /junk');
-//     throw new Error('/junk doesn\'t exist');
-// });
+    console.log('Form : ' + req.query.form);
+    console.log('Name : ' + req.body.name);
+    console.log('Price : ' + req.body.price);
+    console.log('Description : ' + req.body.description);
+
+    req.body.price = parseInt(req.body.price);
+
+    var messages = validServiceAdd(req.body);
+
+    var created = new Date;
+    console.log('Created : ' + created);
+    req.body.created = created;
+
+    if(messages === false) return res.redirect(303, '/error');
+
+    if(messages == '') {
+        messages = 'messages[]=Pomyślnie dodano usługę!&alertType=alert-success';
+        var location = '/servicesList/?';
+    }
+    else {
+        messages += 'alertType=alert-danger';
+        var location = '/serviceAdd/?';
+    }
+
+    var sqlquery = connection.query('INSERT INTO `services` SET ?', req.body, function (err, result) {
+        if(err){
+            console.error(err);
+            return res.redirect(505,'/505');
+        }
+    });
+
+    return res.redirect(303, location + messages);
+});
+
+function validServiceAdd(object){
+    if(typeof(object) != 'object') return false;
+
+    for(var foo in object){
+        if((foo != 'name') && (foo != 'price') && (foo != 'description')) return false;
+    }
+
+    var messages = '';
+    messages += (typeof(object.name) === 'string') ? '' : 'messages[]=Nazwa musi być tekstem!&';
+    messages += (typeof(object.price) === 'number') ? '' : 'messages[]=Cena osób musi być liczbą!&';
+    messages += (typeof(object.description) === 'string') ? '' : 'messages[]=Opis musi być tekstem!&';
+
+    return messages;
+}
 
 app.use(function (err, req, res, next) {
     console.log('Error : ' + err.message);

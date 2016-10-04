@@ -1,0 +1,34 @@
+{{>incorrectForm}}
+<div class="page-header">
+   <h1>List of reservations</h1>
+</div>
+{{#if services}}
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Client id</th>
+                <th>Room is</th>
+                <th>From</th>
+                <th>To</th>
+                <th>Paid</th>
+                <th>Payment</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each services}}
+                <tr>
+                    <th class="row">{{this.id}}</th>
+                    <td>{{this.idClient}}</td>
+                    <td>{{this.idRoom}}</td>
+                    <td>{{this.dateFrom}}</td>
+                    <td>{{this.dateTo}}</td>
+                    <td>{{this.paid}}</td>
+                    <td>{{this.payment}}</td>
+                </tr>
+            {{/each}}
+        </tbody>
+    </table>
+    {{else}}
+    <h3>No reservations are created</h3>
+{{/if}}

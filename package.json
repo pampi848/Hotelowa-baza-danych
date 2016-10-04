@@ -26,6 +26,7 @@
     "express-session": "^1.14.1",
     "formidable": "^1.0.17",
     "fs": "0.0.1-security",
+    "multer": "^1.2.0",
     "mysql": "^2.11.1",
     "path": "^0.12.7"
   }
