@@ -7,7 +7,6 @@ var session = require('express-session');
 var parseurl = require('parseurl');
 var fs = require('fs');
 var mysql = require('mysql');
-var upload = require('formidable-upload');
 
 var app = express();
 
@@ -123,6 +122,13 @@ app.post('/clientAdd/:year/:month', function (req, res) {
     console.log('Created : ' + created);
     req.body.created = created;
 
+    form.parse(req, function (err, fields, file) {
+        if(err) return res.redirect(404, '/error');
+
+        console.log('Received File');
+        console.log(file);
+    });
+
     req.body.birthday = new Date(req.body.birthday);
     req.body.home = parseInt(req.body.home);
     if(req.body.flat != '')req.body.flat = parseInt(req.body.flat);
@@ -139,7 +145,7 @@ app.post('/clientAdd/:year/:month', function (req, res) {
         //console.log(result);
     });
 
-    console.log(req.files);
+    //console.log(req.files);
     //upload().accept('image/jpeg').to('public/img/photos/').exec(req.files.photo, function(err, file) {});
     // fs.readFile(req.files.photo.path, function (err, data) {
     //     var newPath = __dirname + '/public/img/photos/' + req.files.theFile.name;
@@ -172,9 +178,9 @@ function validClientAdd(object){
     messages += (typeof(object.street) === 'string' && object.street.length >= 3) ? '' : 'messages[]=Ulica powinna zawierać minimum 3 znaki!&';
     messages += (typeof(object.home) === 'number' && object.home >= 0) ? '' : 'messages[]=Numer domu nie może być mniejszy od 0!&';
     messages += (typeof object.birthday.getMonth === 'function') ? '' : 'messages[]=Podane urodziny nie są datą!&';
+    console.log(object);
     var arrayPhoto = object.photo.split('.');
-    messages += (arrayPhoto[(arrayPhoto.length-1)] == 'jpg' || arrayPhoto[(arrayPhoto.length-1)] == 'JPEG' || arrayPhoto[(arrayPhoto.length-1)] == 'png') ? '' : 'messages[]=Przyjmujemy tylko pliki z rozszerzeniem *.jpg oraz *.png!&';
-
+    messages += (arrayPhoto[(arrayPhoto.length - 1)] == 'jpg' || arrayPhoto[(arrayPhoto.length - 1)] == 'JPEG' || arrayPhoto[(arrayPhoto.length - 1)] == 'png') ? '' : 'messages[]=Przyjmujemy tylko pliki z rozszerzeniem *.jpg oraz *.png!&';
     return messages;
 }
 

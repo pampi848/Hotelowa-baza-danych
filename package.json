@@ -25,7 +25,8 @@
     "express-handlebars": "^3.0.0",
     "express-session": "^1.14.1",
     "formidable": "^1.0.17",
-    "formidable-upload": "0.0.3",
-    "fs": "0.0.1-security"
+    "fs": "0.0.1-security",
+    "mysql": "^2.11.1",
+    "path": "^0.12.7"
   }
 }
