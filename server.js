@@ -147,6 +147,29 @@ app.get('/serviceAdd', function (req, res) {
     if(req.query.alertType) options.alertType = req.query.alertType;
     return res.render('serviceAdd', { serviceAdd_active: 'active'});
 });
+app.get('/reservationAdd', function (req, res) {
+    var options = {
+        reservationAdd_active: 'active'
+    };
+    if(req.query.messages) options.messages = req.query.messages;
+    if(req.query.alertType) options.alertType = req.query.alertType;
+    return res.render('reservationAdd', { reservationAdd_active: 'active'});
+});
+app.get('/add/:form', function (req, res) {
+    console.log(req.params.form);
+    var options = {
+        reservationAdd_active: 'active',
+        fields: [
+            {id: 'fieldClientId', displayed: 'Client id', type: 'number', name: 'idClient'},
+            {id: 'fieldRoomId', displayed: 'Room id', type: 'number', name: 'idRoom'},
+            {id: 'fieldDateFrom', displayed: 'From', type: 'date', name: 'dateFrom'},
+            {id: 'fieldDateTo', displayed: 'To', type: 'date', name: 'dateTo'}
+        ]
+    };
+    if(req.query.messages) options.messages = req.query.messages;
+    if(req.query.alertType) options.alertType = req.query.alertType;
+    return res.render('add', options);
+});
 
 app.post('/clientAdd', upload.single('photo'), function (req, res) {
     var form = new formidable.IncomingForm();
@@ -320,6 +343,57 @@ app.post('/serviceAdd', function (req, res) {
 });
 
 function validServiceAdd(object){
+    if(typeof(object) != 'object') return false;
+
+    for(var foo in object){
+        if((foo != 'name') && (foo != 'price') && (foo != 'description')) return false;
+    }
+
+    var messages = '';
+    messages += (typeof(object.name) === 'string') ? '' : 'messages[]=Nazwa musi być tekstem!&';
+    messages += (typeof(object.price) === 'number') ? '' : 'messages[]=Cena osób musi być liczbą!&';
+    messages += (typeof(object.description) === 'string') ? '' : 'messages[]=Opis musi być tekstem!&';
+
+    return messages;
+}
+app.post('/reservationAdd', function (req, res) {
+
+    console.log('Client Id : ' + req.query.idClient);
+    console.log('Room Id : ' + req.query.idRoom);
+    console.log('Date From : ' + req.query.dateFrom);
+    console.log('Date To : ' + req.body.dateTo);
+    console.log('Paid : ' + req.body.paid);
+
+    req.body.price = parseInt(req.body.price);
+
+    var messages = validReservationAdd(req.body);
+
+    var created = new Date;
+    console.log('Created : ' + created);
+    req.body.created = created;
+
+    if(messages === false) return res.redirect(303, '/error');
+
+    if(messages == '') {
+        messages = 'messages[]=Pomyślnie dodano usługę!&alertType=alert-success';
+        var location = '/servicesList/?';
+    }
+    else {
+        messages += 'alertType=alert-danger';
+        var location = '/serviceAdd/?';
+    }
+
+    var sqlquery = connection.query('INSERT INTO `services` SET ?', req.body, function (err, result) {
+        if(err){
+            console.error(err);
+            return res.redirect(505,'/505');
+        }
+    });
+
+    return res.redirect(303, location + messages);
+});
+
+function validReservationAdd(object){
     if(typeof(object) != 'object') return false;
 
     for(var foo in object){
