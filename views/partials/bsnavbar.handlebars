@@ -10,19 +10,44 @@
                     </button>
                     <a class="pull-left" href="/"><img id='logo' src="/img/logo.png"></a>
                 </div>
+
                 <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                     <ul class="nav navbar-nav">
-                        <li class={{home_active}}><a href="/" class="zakladki">Home <span class="sr-only">(current)</span></a></li>
-                        <li class={{clientsList_active}}><a href="/clientsList" class="zakladki">List of clients</a></li>
-                        <li class={{clientAdd_active}}><a href="/clientAdd" class="zakladki">Add client</a></li>
-                        <li class={{roomsList_active}}><a href="/roomsList" class="zakladki">List of rooms</a></li>
-                        <li class={{roomAdd_active}}><a href="/roomAdd" class="zakladki">Add room</a></li>
-                        <li class={{servicesList_active}}><a href="/servicesList" class="zakladki">List of services</a></li>
-                        <li class={{serviceAdd_active}}><a href="/serviceAdd" class="zakladki">Add service</a></li>
-                        <li class={{reservationAdd_active}}><a href="/reservationAdd" class="zakladki">Add reservation</a></li>
-                        <li class={{add_active}}><a href="/add" class="zakladki">Just Add</a></li>
+                        <li class={{home_active}}><a href="/" class="zakladki">Home</a></li>
+                        <li class="dropdown {{clients_active}}">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">Clients
+                                <span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="/add/client">New client</a></li>
+                                <li><a href="/list/client">List of clients</a></li>
+                            </ul>
+                        </li>
+                        <li class="dropdown {{rooms_active}}">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">Rooms
+                                <span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="/add/room">New room</a></li>
+                                <li><a href="/list/room">List of rooms</a></li>
+                            </ul>
+                        </li>
+                        <li class="dropdown {{reservations_active}}">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">Reservations
+                                <span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="/add/reservation">New reservation</a></li>
+                                <li><a href="/list/reservation">List of reservations</a></li>
+                            </ul>
+                        </li>
+                        <li class="dropdown {{services_active}}">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">Services
+                                <span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="/add/service">New service</a></li>
+                                <li><a href="/list/service">List of services</a></li>
+                            </ul>
+                        </li>
                     </ul>
-                </div><!-- /.navbar-collapse -->
+                </div>
         </div>
     </div>
 </div>

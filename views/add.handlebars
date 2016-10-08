@@ -1,26 +1,25 @@
 {{>incorrectForm}}
-<form class="form-horizontal" role="form" method="POST"
-      action="/add/?form={{formName}}">
+<form class="form-horizontal" role="form" method="POST">
     {{#each fields}}
 
         <div class="form-group">
             <label for="{{this.id}}" class="col-sm-2 control-label"> {{this.displayed}}
             </label>
             <div class="col-sm-4">
-                <input type="{{this.type}}" required class="form-control" id="{{this.id}}"
+                <input type="{{this.type}}" accept="{{this.accept}}" step="{{this.step}}" required class="form-control" id="{{this.id}}"
                        name="{{this.name}}"/>
             </div>
         </div>
-        {{#each this.textarea}}
-            <div class="form-group">
-                <label for="{{this.id}}" class="col-sm-2 control-label"> {{this.displayed}}
-                </label>
-                <div class="col-sm-4">
+    {{/each}}
+    {{#each textarea}}
+        <div class="form-group">
+            <label for="{{this.id}}" class="col-sm-2 control-label"> {{this.displayed}}
+            </label>
+            <div class="col-sm-4">
             <textarea class="form-control"
                       id="{{this.id}}" name="{{this.name}}"> </textarea>
-                </div>
             </div>
-        {{/each}}
+        </div>
     {{/each}}
         <div class="form-group">
             <div class="col-sm-offset-2 col-sm-4">

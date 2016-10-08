@@ -1,0 +1,26 @@
+{{>incorrectForm}}
+<div class="page-header">
+   <h1>List of {{item}}</h1>
+</div>
+{{#if list}}
+    <table class="table table-hover">
+        <thead>
+            <tr class="row">
+                {{#each thead}}
+                    <th>{{this}}</th>
+                {{/each}}
+            </tr>
+        </thead>
+        {{#each list}}
+            <tbody>
+                <tr class="row">
+                    {{#each this}}
+                        <td>{{this}}</td>
+                    {{/each}}
+                </tr>
+            </tbody>
+        {{/each}}
+    </table>
+    {{else}}
+    <h3>No {{item}} are created</h3>
+{{/if}}

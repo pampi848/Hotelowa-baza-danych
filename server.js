@@ -48,64 +48,37 @@ app.use(require('body-parser').urlencoded({
 
 app.use(require('cookie-parser')(credentials.cookieSecret));
 
+String.prototype.capitalizeFirstLetter = function() {
+    return this.charAt(0).toUpperCase() + this.slice(1);
+};
+String.prototype.replaceAll = function(search, replacement) {
+    var target = this;
+    return target.replace(new RegExp(search, 'g'), replacement);
+};
+String.prototype.createClause = function () {
+    return this.replaceAll('_',' ').capitalizeFirstLetter();
+};
+
+function fetchColumns(table, callback) {
+    connection.query("DESCRIBE "+ table, function (err, row) {
+        if (err) {
+            console.error(err);
+            return res.redirect(505, '/505');
+        }
+        callback(row);
+    });
+}
+
+function clauseColumns(table) {
+    row = fetchColumns(table, callback);
+    var fields = [];
+    for (var i = 0; i < row.length; i++) {
+        fields[i] = row[i].Field.createClause();
+    }
+}
+
 app.get('/', function (req, res){
     return res.render('home', { home_active: "active"});
-});
-
-app.get('/about', function (req, res){
-    return res.render('about', { about_active: 'active'});
-});
-
-app.get('/clientsList',function (req, res){
-    var sqlquery = connection.query('SELECT * FROM `clients`',function (err, result) {
-        if(err){
-            console.error(err);
-            return res.redirect(505,'/505');
-        }
-        var options = {
-            clientList_active: 'active',
-            clients: result
-        };
-        if(req.query.messages) options.messages = req.query.messages;
-        if(req.query.alertType) options.alertType = req.query.alertType;
-        return res.render('clientsList', options);
-    });
-});
-app.get('/roomsList',function (req, res){
-    var sqlquery = connection.query('SELECT * FROM `rooms`',function (err, result) {
-        if(err){
-            console.error(err);
-            return res.redirect(505,'/505');
-        }
-        var options = {
-            roomsList_active: 'active',
-            rooms: result
-        };
-        if(req.query.messages) options.messages = req.query.messages;
-        if(req.query.alertType) options.alertType = req.query.alertType;
-        return res.render('roomsList', options);
-    });
-});
-app.get('/servicesList',function (req, res){
-    var sqlquery = connection.query('SELECT * FROM `services`',function (err, result) {
-        if(err){
-            console.error(err);
-            return res.redirect(505,'/505');
-        }
-        var options = {
-            servicesList_active: 'active',
-            services: result
-        };
-        if(req.query.messages) options.messages = req.query.messages;
-        if(req.query.alertType) options.alertType = req.query.alertType;
-        return res.render('servicesList', options);
-    });
-});
-
-
-
-app.get('/thankyou', function (req, res) {
-    return res.render('thankyou');
 });
 
 app.get('/phpmyadmin', function (req, res) {
@@ -113,59 +86,128 @@ app.get('/phpmyadmin', function (req, res) {
     return res.redirect(303, 'http://localhost/phpmyadmin/');
 });
 
-app.post('/process', function (req, res){
-    console.log(req.body);
-    console.log('Form : ' + req.query.form);
-    console.log('CSRF token : ' + req.body._csrf);
-    console.log('Email : ' + req.body.email);
-    console.log('Question : ' + req.body.ques);
-    return res.redirect(303, '/thankyou');
-});
 
-app.get('/clientAdd', function (req, res) {
-    var options = {
-        clientAdd_active: 'active'
-    };
-    if(req.query.messages) options.messages = req.query.messages;
-    if(req.query.alertType) options.alertType = req.query.alertType;
-    return res.render('clientAdd', options);
-});
-
-app.get('/roomAdd', function (req, res) {
-    var options = {
-        roomAdd_active: 'active'
-    };
-    if(req.query.messages) options.messages = req.query.messages;
-    if(req.query.alertType) options.alertType = req.query.alertType;
-    return res.render('roomAdd', { roomAdd_active: 'active'});
-});
-app.get('/serviceAdd', function (req, res) {
-    var options = {
-        serviceAdd_active: 'active'
-    };
-    if(req.query.messages) options.messages = req.query.messages;
-    if(req.query.alertType) options.alertType = req.query.alertType;
-    return res.render('serviceAdd', { serviceAdd_active: 'active'});
-});
-app.get('/reservationAdd', function (req, res) {
-    var options = {
-        reservationAdd_active: 'active'
-    };
-    if(req.query.messages) options.messages = req.query.messages;
-    if(req.query.alertType) options.alertType = req.query.alertType;
-    return res.render('reservationAdd', { reservationAdd_active: 'active'});
-});
-app.get('/add/:form', function (req, res) {
-    console.log(req.params.form);
-    var options = {
-        reservationAdd_active: 'active',
-        fields: [
-            {id: 'fieldClientId', displayed: 'Client id', type: 'number', name: 'idClient'},
-            {id: 'fieldRoomId', displayed: 'Room id', type: 'number', name: 'idRoom'},
-            {id: 'fieldDateFrom', displayed: 'From', type: 'date', name: 'dateFrom'},
-            {id: 'fieldDateTo', displayed: 'To', type: 'date', name: 'dateTo'}
+// [Forms]
+var service = {
+    formName: 'service',
+    services_active: 'active',
+    fields: [
+        {id: 'fieldName', displayed: 'Name', type: 'text', name: 'name'},
+        {id: 'fieldPrice', displayed: 'Price', type: 'number', name: 'price', step: 0.1}
+    ],
+    textarea: [
+        {id: 'fieldDescription', displayed: 'Description',  name: 'description'}
         ]
-    };
+};
+var reservation = {
+    formName: 'reservation',
+    reservations_active: 'active',
+    fields: [
+        {id: 'fieldClientId', displayed: 'Client id', type: 'number', name: 'id_client'},
+        {id: 'fieldRoomId', displayed: 'Room id', type: 'number', name: 'id_room'},
+        {id: 'fieldDateFrom', displayed: 'From', type: 'date', name: 'date_from'},
+        {id: 'fieldDateTo', displayed: 'To', type: 'date', name: 'date_to'}
+    ]
+};
+var room = {
+    formName: 'room',
+    rooms_active: 'active',
+    fields: [
+        {id: 'fieldNumber', displayed: 'Number of room', type: 'number', name: 'number'},
+        {id: 'fieldCountOfPeople', displayed: 'Count of people', type: 'number', name: 'count_of_people'},
+        {id: 'fieldType', displayed: 'Type', type: 'text', name: 'type'},
+        {id: 'fieldPrice', displayed: 'Price', type: 'number', name: 'price', step: 0.1}
+    ],
+    textarea: [
+        {id: 'fieldDescription', displayed: 'Description',  name: 'description'}
+    ]
+};
+var client = {
+    formName: 'client',
+    clients_active: 'active',
+    fields: [
+        {id: 'fieldName', displayed: 'Name', type: 'text', name: 'name'},
+        {id: 'fieldLastName', displayed: 'Last Name', type: 'text', name: 'last_name'},
+        {id: 'fieldPESEL', displayed: 'PESEL', type: 'number', name: 'pesel'},
+        {id: 'fieldCity', displayed: 'City', type: 'text', name: 'city'},
+        {id: 'fieldPostCode', displayed: 'Post code', type: 'text', name: 'post_code'},
+        {id: 'fieldStreet', displayed: 'Street', type: 'text', name: 'street'},
+        {id: 'fieldHome', displayed: 'Home', type: 'number', name: 'home'},
+        {id: 'fieldFlat', displayed: 'Flat', type: 'number', name: 'flat'},
+        {id: 'fieldEmail', displayed: 'Email', type: 'email', name: 'email'},
+        {id: 'fieldBirthday', displayed: 'Birthday', type: 'date', name: 'birthday'},
+        {id: 'fieldPhone', displayed: 'Phone', type: 'number', name: 'phone'},
+        {id: 'fieldPhoto', displayed: 'Photo', type: 'file', name: 'photo', accept: "image/*" }
+    ]
+};
+
+
+app.get('/list/:list',function (req, res){
+    var table = '';
+    switch (req.params.list){
+        case 'reservation':
+            table = 'reservations';
+            break;
+        case 'service':
+            table = 'services';
+            break;
+        case 'room':
+            table = 'rooms';
+            break;
+        case 'client':
+            table = 'clients';
+            break;
+        default:
+            next();
+            break;
+    }
+    connection.query("DESCRIBE "+table,function (err, row) {
+        if (err) {
+            console.error(err);
+            return res.redirect(505, '/505');
+        }
+        var fields = [];
+        for (var i = 0; i< row.length; i++){
+            fields[i] = row[i].Field.createClause();
+        }
+        connection.query('SELECT * FROM `'+table+'`',function (err, result) {
+            if (err) {
+                console.error(err);
+                return res.redirect(505, '/505');
+            }
+            var options = {
+                list_active: 'active',
+                item: 'list',
+                thead: fields,
+                list: result
+            };
+            if (req.query.messages) options.messages = req.query.messages;
+            if (req.query.alertType) options.alertType = req.query.alertType;
+            return res.render('list', options);
+        });
+    });
+});
+// [/Forms]
+
+app.get('/add/:form', function (req, res) {
+    var options = {};
+    switch (req.params.form){
+        case 'reservation':
+            options = reservation;
+            break;
+        case 'service':
+            options = service;
+            break;
+        case 'room':
+            options = room;
+            break;
+        case 'client':
+        options = client;
+        break;
+        default:
+            next();
+            break;
+    }
     if(req.query.messages) options.messages = req.query.messages;
     if(req.query.alertType) options.alertType = req.query.alertType;
     return res.render('add', options);
@@ -175,7 +217,7 @@ app.post('/clientAdd', upload.single('photo'), function (req, res) {
     var form = new formidable.IncomingForm();
 
     form.parse(req, function (err, fields, file) {
-        if(err) return res.redirect(404, '/error');
+        if(err) return next();
 
         console.log('Received File');
         console.log(file);
@@ -356,62 +398,75 @@ function validServiceAdd(object){
 
     return messages;
 }
-app.post('/reservationAdd', function (req, res) {
 
-    console.log('Client Id : ' + req.query.idClient);
-    console.log('Room Id : ' + req.query.idRoom);
-    console.log('Date From : ' + req.query.dateFrom);
-    console.log('Date To : ' + req.body.dateTo);
-    console.log('Paid : ' + req.body.paid);
 
-    req.body.price = parseInt(req.body.price);
-
-    var messages = validReservationAdd(req.body);
-
-    var created = new Date;
-    console.log('Created : ' + created);
-    req.body.created = created;
-
-    if(messages === false) return res.redirect(303, '/error');
-
-    if(messages == '') {
-        messages = 'messages[]=Pomyślnie dodano usługę!&alertType=alert-success';
-        var location = '/servicesList/?';
+app.post('/add/:form', function (req, res) {
+    var table = '';
+    switch (req.params.form){
+        case 'reservation':
+            table = 'reservations';
+            break;
+        case 'service':
+            table = 'services';
+            break;
+        case 'room':
+            table = 'rooms';
+            break;
+        case 'client':
+            table = 'clients';
+            break;
+        default:
+            next();
+            break;
     }
-    else {
-        messages += 'alertType=alert-danger';
-        var location = '/serviceAdd/?';
-    }
-
-    var sqlquery = connection.query('INSERT INTO `services` SET ?', req.body, function (err, result) {
+    var messages = validAdd(req.body, clauseColumns(table, function (err, columns) {
         if(err){
-            console.error(err);
-            return res.redirect(505,'/505');
+            console.log(err);
+            next();
         }
-    });
+    })
+    );
 
-    return res.redirect(303, location + messages);
+    // var created = new Date;
+    // console.log('Created : ' + created);
+    // req.body.created = created;
+    //
+    // if(messages === false) return res.redirect(303, '/error');
+    //
+    // if(messages == '') {
+    //     messages = 'messages[]=Pomyślnie dodano usługę!&alertType=alert-success';
+    //     var location = '/servicesList/?';
+    // }
+    // else {
+    //     messages += 'alertType=alert-danger';
+    //     var location = '/serviceAdd/?';
+    // }
+    //
+    // var sqlquery = connection.query('INSERT INTO `services` SET ?', req.body, function (err, result) {
+    //     if(err){
+    //         console.error(err);
+    //         return res.redirect(505,'/505');
+    //     }
+    // });
+    //
+    // return res.redirect(303, location + messages);
 });
-
-function validReservationAdd(object){
-    if(typeof(object) != 'object') return false;
-
-    for(var foo in object){
-        if((foo != 'name') && (foo != 'price') && (foo != 'description')) return false;
-    }
-
-    var messages = '';
-    messages += (typeof(object.name) === 'string') ? '' : 'messages[]=Nazwa musi być tekstem!&';
-    messages += (typeof(object.price) === 'number') ? '' : 'messages[]=Cena osób musi być liczbą!&';
-    messages += (typeof(object.description) === 'string') ? '' : 'messages[]=Opis musi być tekstem!&';
-
-    return messages;
+function validAdd(form, row){
+console.log(form, row);
+    // if(typeof(object) != 'object') return false;
+    //
+    // for(var foo in object){
+    //     if((foo != 'name') && (foo != 'price') && (foo != 'description')) return false;
+    // }
+    //
+    // var messages = '';
+    // messages += (typeof(object.name) === 'string') ? '' : 'messages[]=Nazwa musi być tekstem!&';
+    // messages += (typeof(object.price) === 'number') ? '' : 'messages[]=Cena osób musi być liczbą!&';
+    // messages += (typeof(object.description) === 'string') ? '' : 'messages[]=Opis musi być tekstem!&';
+    //
+    // return messages;
 }
 
-app.use(function (err, req, res, next) {
-    console.log('Error : ' + err.message);
-    next();
-});
 //
 
 app.use(function (req, res) {
@@ -421,7 +476,7 @@ app.use(function (req, res) {
     console.log('Response : 404');
 });
 
-app.use(function (err, req, res) {
+app.use('/500', function (err, req, res) {
     console.error(err.stack);
     res.status(500);
     res.render('500');

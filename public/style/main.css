@@ -25,9 +25,6 @@ body{
 label{
     text-align: center!important;
 }
-#labelFlat{
-    position: absolute;
-}
 .smallPhoto{
     width: 32px;
     height: 48px;
@@ -39,6 +36,6 @@ label{
     display: none;
     position: relative;
 }
-.listy{
-width: 100%;
+button{
+    outline:0 !important;
 }

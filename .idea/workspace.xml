@@ -2,8 +2,17 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f33c8d2e-7098-46d6-951d-14ea8a1251e3" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/views/add.handlebars" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/public/response404.html" afterPath="$PROJECT_DIR$/public/style/response404.html" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/public/style/response404.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/views/about.handlebars" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/views/clientAdd.handlebars" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/views/clientsList.handlebars" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/views/reservationAdd.handlebars" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/views/roomAdd.handlebars" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/views/roomsList.handlebars" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/views/serviceAdd.handlebars" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/views/servicesList.handlebars" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/views/thankyou.handlebars" afterPath="" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/views/reservationsList.handlebars" afterPath="$PROJECT_DIR$/views/list.handlebars" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/handlebars/bin/handlebars" afterPath="$PROJECT_DIR$/node_modules/handlebars/bin/handlebars" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/handlebars/print-script" afterPath="$PROJECT_DIR$/node_modules/handlebars/print-script" />
@@ -22,9 +31,8 @@
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/window-size/index.js" afterPath="$PROJECT_DIR$/node_modules/window-size/index.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/style/main.css" afterPath="$PROJECT_DIR$/public/style/main.css" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/server.js" afterPath="$PROJECT_DIR$/server.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/views/clientsList.handlebars" afterPath="$PROJECT_DIR$/views/clientsList.handlebars" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/views/add.handlebars" afterPath="$PROJECT_DIR$/views/add.handlebars" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/views/partials/bsnavbar.handlebars" afterPath="$PROJECT_DIR$/views/partials/bsnavbar.handlebars" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/views/reservationAdd.handlebars" afterPath="$PROJECT_DIR$/views/reservationAdd.handlebars" />
     </list>
     <ignored path="Hotelowa-baza-danych.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -62,8 +70,8 @@
       <file leaf-file-name="server.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/server.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="468">
-              <caret line="167" column="6" selection-start-line="167" selection-start-column="6" selection-end-line="167" selection-end-column="6" />
+            <state relative-caret-position="491">
+              <caret line="177" column="27" selection-start-line="177" selection-start-column="27" selection-end-line="177" selection-end-column="27" />
               <folding />
             </state>
           </provider>
@@ -72,18 +80,18 @@
       <file leaf-file-name="add.handlebars" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/views/add.handlebars">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="396">
-              <caret line="22" column="8" selection-start-line="22" selection-start-column="8" selection-end-line="22" selection-end-column="8" />
+            <state relative-caret-position="18">
+              <caret line="1" column="55" selection-start-line="1" selection-start-column="55" selection-end-line="1" selection-end-column="55" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="reservationAdd.handlebars" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/views/reservationAdd.handlebars">
+      <file leaf-file-name="list.handlebars" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/views/list.handlebars">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="351">
-              <caret line="31" column="76" selection-start-line="31" selection-start-column="76" selection-end-line="31" selection-end-column="76" />
+            <state relative-caret-position="450">
+              <caret line="25" column="7" selection-start-line="25" selection-start-column="7" selection-end-line="25" selection-end-column="7" />
               <folding />
             </state>
           </provider>
@@ -136,15 +144,16 @@
         <option value="$PROJECT_DIR$/views/home.handlebars" />
         <option value="$PROJECT_DIR$/views/contact.handlebars" />
         <option value="$PROJECT_DIR$/views/clientAdd.handlebars" />
-        <option value="$PROJECT_DIR$/views/serviceAdd.handlebars" />
-        <option value="$PROJECT_DIR$/views/roomAdd.handlebars" />
         <option value="$PROJECT_DIR$/views/roomsList.handlebars" />
         <option value="$PROJECT_DIR$/views/servicesList.handlebars" />
-        <option value="$PROJECT_DIR$/views/reservationsList.handlebars" />
         <option value="$PROJECT_DIR$/views/clientsList.handlebars" />
-        <option value="$PROJECT_DIR$/public/style/main.css" />
-        <option value="$PROJECT_DIR$/views/partials/bsnavbar.handlebars" />
         <option value="$PROJECT_DIR$/views/reservationAdd.handlebars" />
+        <option value="$PROJECT_DIR$/views/serviceAdd.handlebars" />
+        <option value="$PROJECT_DIR$/views/roomAdd.handlebars" />
+        <option value="$PROJECT_DIR$/public/style/main.css" />
+        <option value="$PROJECT_DIR$/views/reservationsList.handlebars" />
+        <option value="$PROJECT_DIR$/views/list.handlebars" />
+        <option value="$PROJECT_DIR$/views/partials/bsnavbar.handlebars" />
         <option value="$PROJECT_DIR$/views/add.handlebars" />
         <option value="$PROJECT_DIR$/server.js" />
       </list>
@@ -193,6 +202,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -335,7 +345,6 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scope" />
       <pane id="Scratches" />
     </panes>
   </component>
@@ -353,16 +362,16 @@
     <property name="com.intellij.database.dataSource.DataSourceTemplate" value="MySQL" />
   </component>
   <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/views" />
-      <recent name="$PROJECT_DIR$" />
-      <recent name="$PROJECT_DIR$/public" />
-    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/public/style" />
       <recent name="$PROJECT_DIR$/views/partials" />
       <recent name="$PROJECT_DIR$/views" />
       <recent name="$PROJECT_DIR$/public/static" />
+      <recent name="$PROJECT_DIR$/public" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/views" />
+      <recent name="$PROJECT_DIR$" />
       <recent name="$PROJECT_DIR$/public" />
     </key>
   </component>
@@ -461,7 +470,8 @@
       <workItem from="1475501884276" duration="3581000" />
       <workItem from="1475510594755" duration="21429000" />
       <workItem from="1475588366505" duration="18582000" />
-      <workItem from="1475847875129" duration="10353000" />
+      <workItem from="1475847875129" duration="23864000" />
+      <workItem from="1475923933842" duration="19870000" />
     </task>
     <task id="LOCAL-00001" summary="Mała zmiana we frontendzie.">
       <created>1474659666550</created>
@@ -526,17 +536,24 @@
       <option name="project" value="LOCAL" />
       <updated>1475615019974</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="Podstrona dodająca rezerwacje. Test pomysłu 'dynamiczniejszego' generowania podstrony formularza.">
+      <created>1475864131406</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1475864131406</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="167649000" />
+    <option name="totallyTimeSpent" value="201030000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="1360" y="24" width="1280" height="1000" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.13359375" sideWeight="0.49622437" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.19296876" sideWeight="0.49622437" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.35578004" sideWeight="0.503125" order="8" side_tool="true" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -578,7 +595,8 @@
     <MESSAGE value="Działające dodawanie klientów." />
     <MESSAGE value="Teraz działa XDD" />
     <MESSAGE value="Stworzenie podstron dodajączych oraz wyświetlających listy pokoji i usług.&#10;TODO:&#10;Dodawanie i wyświetlanie listy - rezerwacji, kupna usług, rabatów.&#10;Dodanie 'ewentualnych wyrządzonych szkód' do ceny rezerwacji/usługi.&#10;Płatność na koniec pobytu.&#10;&#10;DODATKOWO:&#10;Zapisywanie zdjęć.&#10;Wyszukiwarka." />
-    <option name="LAST_COMMIT_MESSAGE" value="Stworzenie podstron dodajączych oraz wyświetlających listy pokoji i usług.&#10;TODO:&#10;Dodawanie i wyświetlanie listy - rezerwacji, kupna usług, rabatów.&#10;Dodanie 'ewentualnych wyrządzonych szkód' do ceny rezerwacji/usługi.&#10;Płatność na koniec pobytu.&#10;&#10;DODATKOWO:&#10;Zapisywanie zdjęć.&#10;Wyszukiwarka." />
+    <MESSAGE value="Podstrona dodająca rezerwacje. Test pomysłu 'dynamiczniejszego' generowania podstrony formularza." />
+    <option name="LAST_COMMIT_MESSAGE" value="Podstrona dodająca rezerwacje. Test pomysłu 'dynamiczniejszego' generowania podstrony formularza." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -587,23 +605,7 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/README.md">
-      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
-        <state split_layout="SPLIT">
-          <first_editor relative-caret-position="288">
-            <caret line="16" column="111" selection-start-line="16" selection-start-column="111" selection-end-line="16" selection-end-column="111" />
-          </first_editor>
-          <second_editor />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/style/response404.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="288">
-          <caret line="16" column="7" selection-start-line="16" selection-start-column="7" selection-end-line="16" selection-end-column="7" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/public/style/response404.html" />
     <entry file="file://$PROJECT_DIR$/server.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -612,13 +614,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/public/style/response404.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="272">
-          <caret line="16" column="7" selection-start-line="16" selection-start-column="7" selection-end-line="16" selection-end-column="7" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/public/style/response404.html" />
     <entry file="file://$PROJECT_DIR$/server.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -627,13 +623,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/public/style/response404.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="272">
-          <caret line="16" column="7" selection-start-line="16" selection-start-column="7" selection-end-line="16" selection-end-column="7" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/public/style/response404.html" />
     <entry file="file://$PROJECT_DIR$/public/index.html" />
     <entry file="file://$PROJECT_DIR$/public/template.html" />
     <entry file="file://$PROJECT_DIR$/server.js">
@@ -644,13 +634,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/public/style/response404.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="272">
-          <caret line="16" column="7" selection-start-line="16" selection-start-column="7" selection-end-line="16" selection-end-column="7" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/public/style/response404.html" />
     <entry file="file://$PROJECT_DIR$/public/index.html" />
     <entry file="file://$PROJECT_DIR$/public/template.html" />
     <entry file="file://$PROJECT_DIR$/server.js">
@@ -713,13 +697,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/views/thankyou.handlebars">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="36">
-          <caret line="2" column="6" selection-start-line="2" selection-start-column="6" selection-end-line="2" selection-end-column="6" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/views/thankyou.handlebars" />
     <entry file="file://$PROJECT_DIR$/node_modules/mysql/lib/protocol/sequences/Sequence.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="891">
@@ -744,13 +722,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/views/about.handlebars">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="36">
-          <caret line="2" column="6" selection-start-line="2" selection-start-column="6" selection-end-line="2" selection-end-column="6" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/views/about.handlebars" />
     <entry file="file://$PROJECT_DIR$/package.json">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="495">
@@ -772,20 +744,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/views/clientAdd.handlebars">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="54">
-          <caret line="3" column="0" selection-start-line="3" selection-start-column="0" selection-end-line="3" selection-end-column="22" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/views/serviceAdd.handlebars">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="10" column="10" selection-start-line="10" selection-start-column="10" selection-end-line="18" selection-end-column="10" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/views/roomsList.handlebars">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="540">
@@ -800,74 +758,62 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/views/reservationsList.handlebars">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="288">
-          <caret line="16" column="16" selection-start-line="16" selection-start-column="16" selection-end-line="16" selection-end-column="16" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/style/response404.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="288">
-          <caret line="16" column="7" selection-start-line="16" selection-start-column="7" selection-end-line="16" selection-end-column="7" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/style/main.css">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="351">
-          <caret line="32" column="17" selection-start-line="32" selection-start-column="16" selection-end-line="32" selection-end-column="17" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/views/roomAdd.handlebars">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="279">
-          <caret line="35" column="4" selection-start-line="35" selection-start-column="4" selection-end-line="42" selection-end-column="10" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/public/style/response404.html" />
     <entry file="file://$PROJECT_DIR$/views/clientsList.handlebars">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="252">
           <caret line="14" column="31" selection-start-line="14" selection-start-column="31" selection-end-line="14" selection-end-column="31" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/views/serviceAdd.handlebars" />
+    <entry file="file://$PROJECT_DIR$/views/roomAdd.handlebars" />
+    <entry file="file://$PROJECT_DIR$/views/clientAdd.handlebars" />
+    <entry file="file://$PROJECT_DIR$/views/reservationAdd.handlebars" />
+    <entry file="file://$PROJECT_DIR$/public/style/main.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="720">
+          <caret line="40" column="1" selection-start-line="40" selection-start-column="1" selection-end-line="40" selection-end-column="1" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/views/reservationsList.handlebars">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="216">
+          <caret line="12" column="27" selection-start-line="12" selection-start-column="27" selection-end-line="12" selection-end-column="27" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/views/partials/bsnavbar.handlebars">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="468">
-          <caret line="26" column="10" selection-start-line="26" selection-start-column="10" selection-end-line="26" selection-end-column="10" />
+        <state relative-caret-position="522">
+          <caret line="29" column="55" selection-start-line="29" selection-start-column="55" selection-end-line="29" selection-end-column="55" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/views/reservationAdd.handlebars">
+    <entry file="file://$PROJECT_DIR$/views/list.handlebars">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="351">
-          <caret line="31" column="76" selection-start-line="31" selection-start-column="76" selection-end-line="31" selection-end-column="76" />
+        <state relative-caret-position="450">
+          <caret line="25" column="7" selection-start-line="25" selection-start-column="7" selection-end-line="25" selection-end-column="7" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/views/add.handlebars">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="396">
-          <caret line="22" column="8" selection-start-line="22" selection-start-column="8" selection-end-line="22" selection-end-column="8" />
+        <state relative-caret-position="18">
+          <caret line="1" column="55" selection-start-line="1" selection-start-column="55" selection-end-line="1" selection-end-column="55" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/server.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="468">
-          <caret line="167" column="6" selection-start-line="167" selection-start-column="6" selection-end-line="167" selection-end-column="6" />
+        <state relative-caret-position="491">
+          <caret line="177" column="27" selection-start-line="177" selection-start-column="27" selection-end-line="177" selection-end-column="27" />
           <folding />
         </state>
       </provider>
