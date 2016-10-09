@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Czas generowania: 04 Paź 2016, 22:56
+-- Czas generowania: 10 Paź 2016, 00:05
 -- Wersja serwera: 10.1.16-MariaDB
 -- Wersja PHP: 7.0.9
 
@@ -23,31 +23,18 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Struktura tabeli dla tabeli `client-service`
---
-
-CREATE TABLE `client-service` (
-  `id` int(11) NOT NULL,
-  `idClient` int(11) NOT NULL,
-  `idService` int(11) NOT NULL,
-  `paid` datetime NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;
-
--- --------------------------------------------------------
-
---
 -- Struktura tabeli dla tabeli `clients`
 --
 
 CREATE TABLE `clients` (
   `id` int(11) NOT NULL,
   `name` varchar(255) COLLATE utf8_polish_ci NOT NULL,
-  `lastName` varchar(255) COLLATE utf8_polish_ci NOT NULL,
+  `last_name` varchar(255) COLLATE utf8_polish_ci NOT NULL,
   `pesel` varchar(11) COLLATE utf8_polish_ci NOT NULL,
   `birthday` date NOT NULL,
   `phone` int(11) NOT NULL,
   `city` varchar(255) COLLATE utf8_polish_ci NOT NULL,
-  `postCode` int(11) NOT NULL,
+  `post_code` int(11) NOT NULL,
   `street` varchar(255) COLLATE utf8_polish_ci NOT NULL,
   `home` int(11) NOT NULL,
   `flat` varchar(255) COLLATE utf8_polish_ci NOT NULL,
@@ -60,7 +47,7 @@ CREATE TABLE `clients` (
 -- Zrzut danych tabeli `clients`
 --
 
-INSERT INTO `clients` (`id`, `name`, `lastName`, `pesel`, `birthday`, `phone`, `city`, `postCode`, `street`, `home`, `flat`, `email`, `photo`, `created`) VALUES
+INSERT INTO `clients` (`id`, `name`, `last_name`, `pesel`, `birthday`, `phone`, `city`, `post_code`, `street`, `home`, `flat`, `email`, `photo`, `created`) VALUES
 (1, 'Michał Klemiato', 'Klemiato', '12345678910', '0555-05-05', 606214001, 'Dębnica Kaszubska', 76, 'Fabryczna', 606214001, '', 'pampi.com@gmail.com', 'shitstorm.jpg', '2016-10-03 22:13:07'),
 (2, 'Michał Klemiato', 'Klemiato', '12345678910', '0555-05-05', 606214001, 'Dębnica Kaszubska', 76, 'Fabryczna', 606214001, '', 'pampi.com@gmail.com', 'shitstorm.jpg', '2016-10-03 22:19:47'),
 (3, 'Michał Klemiato', 'Klemiato', '12345678910', '0555-05-05', 606214001, 'Dębnica Kaszubska', 76, 'Fabryczna', 606214001, '', 'pampi.com@gmail.com', 'shitstorm.jpg', '2016-10-03 22:27:16'),
@@ -111,6 +98,27 @@ INSERT INTO `clients` (`id`, `name`, `lastName`, `pesel`, `birthday`, `phone`, `
 -- --------------------------------------------------------
 
 --
+-- Struktura tabeli dla tabeli `client_service`
+--
+
+CREATE TABLE `client_service` (
+  `id` int(11) NOT NULL,
+  `id_client` int(11) NOT NULL,
+  `id_service` int(11) NOT NULL,
+  `paid` datetime NOT NULL,
+  `created` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;
+
+--
+-- Zrzut danych tabeli `client_service`
+--
+
+INSERT INTO `client_service` (`id`, `id_client`, `id_service`, `paid`, `created`) VALUES
+(1, 1, 1, '0005-05-05 00:00:00', '2016-10-10 00:04:43');
+
+-- --------------------------------------------------------
+
+--
 -- Struktura tabeli dla tabeli `discounts`
 --
 
@@ -119,9 +127,17 @@ CREATE TABLE `discounts` (
   `name` varchar(255) COLLATE utf8_polish_ci NOT NULL,
   `code` varchar(255) COLLATE utf8_polish_ci NOT NULL,
   `value` int(11) NOT NULL,
-  `dateFrom` datetime NOT NULL,
-  `dateTo` datetime NOT NULL
+  `date_from` datetime NOT NULL,
+  `date_to` datetime NOT NULL,
+  `created` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;
+
+--
+-- Zrzut danych tabeli `discounts`
+--
+
+INSERT INTO `discounts` (`id`, `name`, `code`, `value`, `date_from`, `date_to`, `created`) VALUES
+(1, '1', '1', 1, '0001-01-01 00:00:00', '0001-01-01 00:00:00', '2016-10-10 00:05:19');
 
 -- --------------------------------------------------------
 
@@ -131,13 +147,20 @@ CREATE TABLE `discounts` (
 
 CREATE TABLE `reservations` (
   `id` int(11) NOT NULL,
-  `payment` varchar(255) COLLATE utf8_polish_ci NOT NULL,
-  `dateFrom` datetime NOT NULL,
-  `dateTo` datetime NOT NULL,
-  `idClient` int(11) NOT NULL,
-  `idRoom` int(11) NOT NULL,
-  `paid` float NOT NULL
+  `date_from` datetime NOT NULL,
+  `date_to` datetime NOT NULL,
+  `id_client` int(11) NOT NULL,
+  `id_room` int(11) NOT NULL,
+  `paid` datetime NOT NULL,
+  `created` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;
+
+--
+-- Zrzut danych tabeli `reservations`
+--
+
+INSERT INTO `reservations` (`id`, `date_from`, `date_to`, `id_client`, `id_room`, `paid`, `created`) VALUES
+(5, '2016-10-05 00:00:00', '2016-10-27 00:00:00', 55, 5, '2016-10-12 00:00:00', '0000-00-00 00:00:00');
 
 -- --------------------------------------------------------
 
@@ -148,10 +171,10 @@ CREATE TABLE `reservations` (
 CREATE TABLE `rooms` (
   `id` int(11) NOT NULL,
   `number` int(11) NOT NULL,
-  `countOfPeople` int(11) NOT NULL,
+  `count_of_people` int(11) NOT NULL,
   `type` varchar(255) COLLATE utf8_polish_ci NOT NULL,
   `created` datetime NOT NULL,
-  `Description` varchar(255) COLLATE utf8_polish_ci NOT NULL,
+  `description` varchar(255) COLLATE utf8_polish_ci NOT NULL,
   `price` float NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;
 
@@ -159,14 +182,15 @@ CREATE TABLE `rooms` (
 -- Zrzut danych tabeli `rooms`
 --
 
-INSERT INTO `rooms` (`id`, `number`, `countOfPeople`, `type`, `created`, `Description`, `price`) VALUES
+INSERT INTO `rooms` (`id`, `number`, `count_of_people`, `type`, `created`, `description`, `price`) VALUES
 (1, 1, 1, 'single', '2016-10-04 21:52:02', 'jednoosobowy ', 0),
 (2, 1, 1, 'single', '2016-10-04 21:52:31', 'jednoosobowy ', 0),
 (3, 1, 1, 'single', '2016-10-04 21:54:29', 'jednoosobowy ', 0),
 (4, 1, 1, 'single', '2016-10-04 21:56:25', 'jednoosobowy ', 0),
 (5, 1, 1, '1', '2016-10-04 21:58:46', ' ', 0),
 (6, 1, 1, '1', '2016-10-04 22:32:56', ' 1', 1),
-(7, 1, 1, '1', '2016-10-04 22:33:29', '1 ', 1.1);
+(7, 1, 1, '1', '2016-10-04 22:33:29', '1 ', 1.1),
+(8, 10, 10, 'rtsry', '2016-10-07 21:02:53', ' tfiktd', 354);
 
 -- --------------------------------------------------------
 
@@ -190,22 +214,29 @@ INSERT INTO `services` (`id`, `name`, `price`, `description`, `created`) VALUES
 (1, 'Michał Klemiato', 1, ' 1', '2016-10-04 22:17:14'),
 (2, 'ty', 0, ' rth', '2016-10-04 22:28:31'),
 (3, 'yery', 0, ' tyjktyj', '2016-10-04 22:37:04'),
-(4, '3ty', 556, ' ethet', '2016-10-04 22:43:34');
+(4, '3ty', 556, ' ethet', '2016-10-04 22:43:34'),
+(5, 'lol', 476, ' uilkgyu', '2016-10-07 20:54:01'),
+(6, '654', 655, ' 5466456', '2016-10-08 23:52:49'),
+(7, '654', 655, ' 5466456', '2016-10-08 23:53:19'),
+(8, '8', 8, ' 8', '0000-00-00 00:00:00'),
+(9, '8', 8, ' 8', '0000-00-00 00:00:00'),
+(10, '1', 1, ' 1', '0000-00-00 00:00:00'),
+(11, '1', 1, ' 1', '2016-10-09 22:48:08');
 
 --
 -- Indeksy dla zrzutów tabel
 --
 
 --
--- Indexes for table `client-service`
---
-ALTER TABLE `client-service`
-  ADD PRIMARY KEY (`id`);
-
---
 -- Indexes for table `clients`
 --
 ALTER TABLE `clients`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `client_service`
+--
+ALTER TABLE `client_service`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -237,35 +268,35 @@ ALTER TABLE `services`
 --
 
 --
--- AUTO_INCREMENT dla tabeli `client-service`
---
-ALTER TABLE `client-service`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
---
 -- AUTO_INCREMENT dla tabeli `clients`
 --
 ALTER TABLE `clients`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=47;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT dla tabeli `client_service`
+--
+ALTER TABLE `client_service`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 --
 -- AUTO_INCREMENT dla tabeli `discounts`
 --
 ALTER TABLE `discounts`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 --
 -- AUTO_INCREMENT dla tabeli `reservations`
 --
 ALTER TABLE `reservations`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 --
 -- AUTO_INCREMENT dla tabeli `rooms`
 --
 ALTER TABLE `rooms`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 --
 -- AUTO_INCREMENT dla tabeli `services`
 --
 ALTER TABLE `services`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

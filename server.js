@@ -59,37 +59,69 @@ String.prototype.createClause = function () {
     return this.replaceAll('_',' ').capitalizeFirstLetter();
 };
 
-function fetchColumns(table, callback) {
-    connection.query("DESCRIBE "+ table, function (err, row) {
-        if (err) {
-            console.error(err);
-            return res.redirect(505, '/505');
-        }
-        callback(row);
-    });
-}
-
-function clauseColumns(table) {
-    row = fetchColumns(table, callback);
+function clauseColumns(row) {
     var fields = [];
     for (var i = 0; i < row.length; i++) {
-        fields[i] = row[i].Field.createClause();
+         fields[i] = row[i].Field.createClause();
     }
+    return fields;
+}
+function makeArray(object) {
+    var array = [];
+    var i = 0;
+    for(var key in object) {
+        array[i] = key;
+        i++;
+    }
+    return array;
 }
 
-app.get('/', function (req, res){
-    return res.render('home', { home_active: "active"});
-});
+function checkForm(inputsNames, formName) {
+    inputsNames = makeArray(inputsNames);
+    var formOptions = formData(formName);
+    var formFields = formOptions.fields;
+    if(formOptions.textarea)var formFields = formFields.concat(formOptions.textarea);
+    for (var i = 0; i < inputsNames.length; i++){
+        if(inputsNames[i] == 'id' || inputsNames[i] == 'created')return false;
+        for (var j = 0; j < formFields.length; j++) {
+            if(inputsNames[i] == formFields[j].name)break;
+            if(j+1 == formFields.length)return false;
+        }
+    }
+    return true;
+}
 
-app.get('/phpmyadmin', function (req, res) {
-    console.log('Redirect to localhost/phpmyadmin')
-    return res.redirect(303, 'http://localhost/phpmyadmin/');
-});
+function formData(formName) {
+    switch (formName){
+        case 'reservation':
+            return reservation;
+            break;
+        case 'service':
+            return service;
+            break;
+        case 'room':
+            return room;
+            break;
+        case 'client':
+            return client;
+            break;
+        case 'discount':
+            return discount;
+            break;
+        case 'client_service':
+            return clientService;
+            break;
+        default:
+            return '404';
+            break;
+    }
+}
 
 
 // [Forms]
 var service = {
     formName: 'service',
+    tableName: 'services',
     services_active: 'active',
     fields: [
         {id: 'fieldName', displayed: 'Name', type: 'text', name: 'name'},
@@ -99,8 +131,31 @@ var service = {
         {id: 'fieldDescription', displayed: 'Description',  name: 'description'}
         ]
 };
+var discount = {
+    formName: 'discount',
+    tableName: 'discounts',
+    discounts_active: 'active',
+    fields: [
+        {id: 'fieldName', displayed: 'Name', type: 'text', name: 'name'},
+        {id: 'fieldCode', displayed: 'Code', type: 'text', name: 'code'},
+        {id: 'fieldValue', displayed: 'Value', type: 'number', name: 'value'},
+        {id: 'fieldDateFrom', displayed: 'From', type: 'date', name: 'date_from'},
+        {id: 'fieldDateTo', displayed: 'To', type: 'date', name: 'date_to'}
+    ]
+};
+var clientService = {
+    formName: 'client&service',
+    tableName: 'client_service',
+    client_service_active: 'active',
+    fields: [
+        {id: 'fieldClientId', displayed: 'Client id', type: 'number', name: 'id_client'},
+        {id: 'fieldServiceId', displayed: 'Service id', type: 'number', name: 'id_service'},
+        {id: 'fieldPaid', displayed: 'Date of paid', type: 'date', name: 'paid'}
+    ]
+};
 var reservation = {
     formName: 'reservation',
+    tableName: 'reservations',
     reservations_active: 'active',
     fields: [
         {id: 'fieldClientId', displayed: 'Client id', type: 'number', name: 'id_client'},
@@ -111,6 +166,7 @@ var reservation = {
 };
 var room = {
     formName: 'room',
+    tableName: 'rooms',
     rooms_active: 'active',
     fields: [
         {id: 'fieldNumber', displayed: 'Number of room', type: 'number', name: 'number'},
@@ -124,6 +180,7 @@ var room = {
 };
 var client = {
     formName: 'client',
+    tableName: 'clients',
     clients_active: 'active',
     fields: [
         {id: 'fieldName', displayed: 'Name', type: 'text', name: 'name'},
@@ -141,44 +198,32 @@ var client = {
     ]
 };
 
+app.get('/', function (req, res){
+    return res.render('home', { home_active: "active"});
+});
 
-app.get('/list/:list',function (req, res){
-    var table = '';
-    switch (req.params.list){
-        case 'reservation':
-            table = 'reservations';
-            break;
-        case 'service':
-            table = 'services';
-            break;
-        case 'room':
-            table = 'rooms';
-            break;
-        case 'client':
-            table = 'clients';
-            break;
-        default:
-            next();
-            break;
-    }
+app.get('/phpmyadmin', function (req, res) {
+    console.log('Redirect to localhost/phpmyadmin')
+    return res.redirect(303, 'http://localhost/phpmyadmin/');
+});
+
+app.get('/list/:form',function (req, res, next){
+    if(formData(req.params.form) != '404')var table = formData(req.params.form).tableName;
+    else return next();
     connection.query("DESCRIBE "+table,function (err, row) {
         if (err) {
             console.error(err);
             return res.redirect(505, '/505');
-        }
-        var fields = [];
-        for (var i = 0; i< row.length; i++){
-            fields[i] = row[i].Field.createClause();
         }
         connection.query('SELECT * FROM `'+table+'`',function (err, result) {
             if (err) {
                 console.error(err);
                 return res.redirect(505, '/505');
             }
+            var formName = formData(req.params.form).formName;
             var options = {
-                list_active: 'active',
-                item: 'list',
-                thead: fields,
+                item: formName,
+                thead: clauseColumns(row),
                 list: result
             };
             if (req.query.messages) options.messages = req.query.messages;
@@ -189,285 +234,34 @@ app.get('/list/:list',function (req, res){
 });
 // [/Forms]
 
-app.get('/add/:form', function (req, res) {
-    var options = {};
-    switch (req.params.form){
-        case 'reservation':
-            options = reservation;
-            break;
-        case 'service':
-            options = service;
-            break;
-        case 'room':
-            options = room;
-            break;
-        case 'client':
-        options = client;
-        break;
-        default:
-            next();
-            break;
-    }
+app.get('/add/:form', function (req, res, next) {
+    if(formData(req.params.form) != '404')var options = formData(req.params.form);
+    else return next();
     if(req.query.messages) options.messages = req.query.messages;
     if(req.query.alertType) options.alertType = req.query.alertType;
     return res.render('add', options);
 });
 
-app.post('/clientAdd', upload.single('photo'), function (req, res) {
-    var form = new formidable.IncomingForm();
+app.post('/add/:form', function (req, res, next) {
+    console.log("Received form : " + req.params.form);
+    console.log("User data : ");
+    console.log(req.body);
+    if(formData(req.params.form) != '404')var table = formData(req.params.form).tableName;
+    else return next();
 
-    form.parse(req, function (err, fields, file) {
-        if(err) return next();
+    if(checkForm(req.body,req.params.form) == false)return next();
 
-        console.log('Received File');
-        console.log(file);
-    });
+    req.body.created = new Date();
 
-    console.log('Form : ' + req.query.form);
-    console.log('Name : ' + req.body.name);
-    console.log('Last Name : ' + req.body.lastName);
-    console.log('City : ' + req.body.city);
-    console.log('Post Code : ' + req.body.postCode);
-    console.log('Street : ' + req.body.street);
-    console.log('Home : ' + req.body.home);
-    console.log('Flat : ' + req.body.flat);
-    console.log('Email : ' + req.body.email);
-    console.log('Birthday : ' + req.body.birthday);
-    console.log('Phone : ' + req.body.phone);
-    console.log('PESEL : ' + req.body.pesel);
-    console.log('Photo name : ' + req.body.photo);
-    var created = new Date;
-    console.log('Created : ' + created);
-    req.body.created = created;
-
-    req.body.birthday = new Date(req.body.birthday);
-    req.body.home = parseInt(req.body.home);
-    if(req.body.flat != '')req.body.flat = parseInt(req.body.flat);
-
-
-    var messages = validClientAdd(req.body);
-    if(messages === false) return res.redirect(303, '/error');
-
-    console.log("file "+req.files);
-
-    if(messages == '') {
-        messages = 'messages[]=Pomyślnie dodano klienta!&alertType=alert-success';
-        var location = '/clientsList/?';
-    }
-    else {
-        messages += 'alertType=alert-danger';
-        var location = '/clientAdd/?';
-    }
-
-    var sqlquery = connection.query('INSERT INTO `clients` SET ?', req.body, function (err, result) {
+    connection.query('INSERT INTO `'+table+'` SET ?', req.body, function (err, result) {
         if(err){
             console.error(err);
             return res.redirect(505,'/505');
         }
+        res.redirect(303,'/list/'+req.params.form);
     });
-
-    return res.redirect(303, location + messages);
 });
 
-function validClientAdd(object){
-    if(typeof(object) != 'object') return false;
-
-    for(var foo in object){
-        if((foo != 'name') && (foo != 'pesel') && (foo != 'lastName') && (foo != 'city') && (foo != 'postCode') && (foo != 'street') && (foo != 'home') && (foo != 'flat') && (foo != 'email') && (foo != 'birthday') && (foo != 'phone') && (foo != 'photo') && (foo != 'created')) return false;
-    }
-
-    var messages = '';
-    messages += (typeof(object.name) === 'string' && object.name.length >= 3) ? '' : 'messages[]=Imię powinno zawierać minimum 3 znaki!&';
-    messages += (typeof(object.lastName) === 'string' && object.lastName.length >= 3) ? '' : 'messages[]=Nazwisko powinno zawierać minimum 3 znaki!&';
-    messages += (typeof(object.pesel) === 'string' && String(object.pesel).length== 11) ? '' : 'messages[]=Pesel powinien mieć równo 11 znaków!&';
-    messages += (typeof(object.postCode) === 'string' && object.postCode.length == 6) ? '' : 'messages[]=Kod pocztowy powinien zawierać 6 znaków!&';
-    messages += (typeof(object.street) === 'string' && object.street.length >= 3) ? '' : 'messages[]=Ulica powinna zawierać minimum 3 znaki!&';
-    messages += (typeof(object.home) === 'number' && object.home >= 0) ? '' : 'messages[]=Numer domu nie może być mniejszy od 0!&';
-    messages += (typeof object.birthday.getMonth === 'function') ? '' : 'messages[]=Podane urodziny nie są datą!&';
-    console.log(object);
-    if(typeof(object.photo) == 'string') {
-        var arrayPhoto = object.photo.split('.');
-        messages += (arrayPhoto[(arrayPhoto.length - 1)] == 'jpg' || arrayPhoto[(arrayPhoto.length - 1)] == 'JPEG' || arrayPhoto[(arrayPhoto.length - 1)] == 'png') ? '' : '&messages[]=Przyjmujemy tylko pliki z rozszerzeniem *.jpg oraz *.png!';
-    }
-        return messages;
-}
-app.post('/roomAdd', function (req, res) {
-
-    console.log('Form : ' + req.query.form);
-    console.log('Number : ' + req.body.number);
-    console.log('Count of People : ' + req.body.countOfPeople);
-    console.log('Type : ' + req.body.type);
-    console.log('Price/day : ' + req.body.price);
-    console.log('Description : ' + req.body.description);
-
-    req.body.number = parseInt(req.body.number);
-    req.body.countOfPeople = parseInt(req.body.countOfPeople);
-    req.body.price = parseFloat(req.body.price);
-
-    var messages = validRoomAdd(req.body);
-
-    var created = new Date;
-    console.log('Created : ' + created);
-    req.body.created = created;
-
-    if(messages === false) return res.redirect(303, '/error');
-
-
-    if(messages == '') {
-        messages = 'messages[]=Pomyślnie dodano pokój!&alertType=alert-success';
-        var location = '/roomsList/?';
-    }
-    else {
-        messages += 'alertType=alert-danger';
-        var location = '/roomAdd/?';
-    }
-
-    var sqlquery = connection.query('INSERT INTO `rooms` SET ?', req.body, function (err, result) {
-        if(err){
-            console.error(err);
-            return res.redirect(505,'/505');
-        }
-    });
-
-    return res.redirect(303, location + messages);
-});
-
-function validRoomAdd(object){
-    if(typeof(object) != 'object') return false;
-
-    for(var foo in object){
-        if((foo != 'number') && (foo != 'countOfPeople') && (foo != 'type') && (foo != 'price') && (foo != 'description')) return false;
-    }
-
-    var messages = '';
-    messages += (typeof(object.number) === 'number') ? '' : 'messages[]=Number musi być liczbą!&';
-    messages += (typeof(object.countOfPeople) === 'number') ? '' : 'messages[]=Liczba osób musi być tekstem!&';
-    messages += (typeof(object.type) === 'string') ? '' : 'messages[]=Typ musi być tekstem!&';
-    messages += (typeof(object.price) === 'number') ? '' : 'messages[]=Cena musi być liczbą!&';
-    messages += (typeof(object.description) === 'string') ? '' : 'messages[]=Opis musi być tekstem!&';
-
-    return messages;
-}
-app.post('/serviceAdd', function (req, res) {
-
-    console.log('Form : ' + req.query.form);
-    console.log('Name : ' + req.body.name);
-    console.log('Price : ' + req.body.price);
-    console.log('Description : ' + req.body.description);
-
-    req.body.price = parseInt(req.body.price);
-
-    var messages = validServiceAdd(req.body);
-
-    var created = new Date;
-    console.log('Created : ' + created);
-    req.body.created = created;
-
-    if(messages === false) return res.redirect(303, '/error');
-
-    if(messages == '') {
-        messages = 'messages[]=Pomyślnie dodano usługę!&alertType=alert-success';
-        var location = '/servicesList/?';
-    }
-    else {
-        messages += 'alertType=alert-danger';
-        var location = '/serviceAdd/?';
-    }
-
-    var sqlquery = connection.query('INSERT INTO `services` SET ?', req.body, function (err, result) {
-        if(err){
-            console.error(err);
-            return res.redirect(505,'/505');
-        }
-    });
-
-    return res.redirect(303, location + messages);
-});
-
-function validServiceAdd(object){
-    if(typeof(object) != 'object') return false;
-
-    for(var foo in object){
-        if((foo != 'name') && (foo != 'price') && (foo != 'description')) return false;
-    }
-
-    var messages = '';
-    messages += (typeof(object.name) === 'string') ? '' : 'messages[]=Nazwa musi być tekstem!&';
-    messages += (typeof(object.price) === 'number') ? '' : 'messages[]=Cena osób musi być liczbą!&';
-    messages += (typeof(object.description) === 'string') ? '' : 'messages[]=Opis musi być tekstem!&';
-
-    return messages;
-}
-
-
-app.post('/add/:form', function (req, res) {
-    var table = '';
-    switch (req.params.form){
-        case 'reservation':
-            table = 'reservations';
-            break;
-        case 'service':
-            table = 'services';
-            break;
-        case 'room':
-            table = 'rooms';
-            break;
-        case 'client':
-            table = 'clients';
-            break;
-        default:
-            next();
-            break;
-    }
-    var messages = validAdd(req.body, clauseColumns(table, function (err, columns) {
-        if(err){
-            console.log(err);
-            next();
-        }
-    })
-    );
-
-    // var created = new Date;
-    // console.log('Created : ' + created);
-    // req.body.created = created;
-    //
-    // if(messages === false) return res.redirect(303, '/error');
-    //
-    // if(messages == '') {
-    //     messages = 'messages[]=Pomyślnie dodano usługę!&alertType=alert-success';
-    //     var location = '/servicesList/?';
-    // }
-    // else {
-    //     messages += 'alertType=alert-danger';
-    //     var location = '/serviceAdd/?';
-    // }
-    //
-    // var sqlquery = connection.query('INSERT INTO `services` SET ?', req.body, function (err, result) {
-    //     if(err){
-    //         console.error(err);
-    //         return res.redirect(505,'/505');
-    //     }
-    // });
-    //
-    // return res.redirect(303, location + messages);
-});
-function validAdd(form, row){
-console.log(form, row);
-    // if(typeof(object) != 'object') return false;
-    //
-    // for(var foo in object){
-    //     if((foo != 'name') && (foo != 'price') && (foo != 'description')) return false;
-    // }
-    //
-    // var messages = '';
-    // messages += (typeof(object.name) === 'string') ? '' : 'messages[]=Nazwa musi być tekstem!&';
-    // messages += (typeof(object.price) === 'number') ? '' : 'messages[]=Cena osób musi być liczbą!&';
-    // messages += (typeof(object.description) === 'string') ? '' : 'messages[]=Opis musi być tekstem!&';
-    //
-    // return messages;
-}
-
-//
 
 app.use(function (req, res) {
     res.type('text/html');
