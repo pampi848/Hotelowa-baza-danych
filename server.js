@@ -116,6 +116,19 @@ function formData(formName) {
             break;
     }
 }
+function payment(formName) {
+    switch (formName){
+        case 'service':
+            return {from: service.tableName, join:clientService.tableName};
+            break;
+        case 'room':
+            return {from: room.tableName, join:reservation.tableName};
+            break;
+        default:
+            return '404';
+            break;
+    }
+}
 
 
 // [Forms]
@@ -202,8 +215,73 @@ app.get('/', function (req, res){
     return res.render('home', { home_active: "active"});
 });
 
+app.get('/pay_services/:id', function (req, res) {
+    connection.query('SELECT * FROM `services` as s INNER JOIN `client_service` as c ON s.id=c.id_service WHERE c.id_client=?', req.params.id, function (err, result) {
+        if (err) {
+            console.error(err);
+            return res.redirect(505, '/505');
+        }
+        console.log(result);
+        var sum = 0;
+        for(var i=0; i < result.length; i++){
+            sum += result[i].price
+        }
+        return res.render('pay_services', {list: result,sum: sum});
+    });
+});
+
+app.get('/pay_rooms/:id', function (req, res) {
+    connection.query('SELECT * FROM `rooms` as s INNER JOIN `reservations` as c ON s.id=c.id_room WHERE c.id_client=?', req.params.id, function (err, result) {
+        if (err) {
+            console.error(err);
+            return res.redirect(505, '/505');
+        }
+        console.log(result);
+        var sum = 0;
+        for(var i=0; i < result.length; i++){
+            sum += result[i].price
+        }
+        return res.render('pay_rooms', {list: result,sum: sum});
+    });
+});
+
+app.get('/pay/:form/:client_id', function (req, res, next) {
+    if(payment(req.params.form) != '404')var tables = payment(req.params.form);
+    else return next();
+
+    console.log(tables);
+    connection.query("DESCRIBE "+tables.from,function (err, rowFrom) {
+        if (err) {
+            console.error(err);
+            return res.redirect(505, '/505');
+        }
+        connection.query("DESCRIBE "+tables.join,function (err, rowJoin) {
+            if (err) {
+                console.error(err);
+                return res.redirect(505, '/505');
+            }
+    connection.query('SELECT * FROM `'+tables.from+'` as ro INNER JOIN `'+tables.join+'` as re ON ro.id=re.id_room WHERE re.id_client=?', req.params.client_id, function (err, result) {
+        if (err) {
+            console.error(err);
+            return res.redirect(505, '/505');
+        }
+        console.log(result);
+        var formName = payment(req.params.form).formName;
+        var options = {
+            item: formName,
+            thead: clauseColumns(rowFrom).concat(clauseColumns(rowJoin)),
+            list: result
+        };
+        if (req.query.messages) options.messages = req.query.messages;
+        if (req.query.alertType) options.alertType = req.query.alertType;
+        return res.render('list', options);
+    });
+    });
+    });
+});
+
 app.get('/phpmyadmin', function (req, res) {
-    console.log('Redirect to localhost/phpmyadmin')
+    console.log('Redirect to localhost/phpmyadmin');
     return res.redirect(303, 'http://localhost/phpmyadmin/');
 });
 

@@ -1,0 +1,40 @@
+<div class="page-header">
+   <h1>Bought services by {{item}}</h1>
+</div>
+{{#if list}}
+    <table class="table table-hover">
+        <thead>
+            <tr class="row">
+                    <th>id</th>
+                    <th>number</th>
+                    <th>count_of_people</th>
+                    <th>type</th>
+                    <th>created</th>
+                    <th>description</th>
+                    <th>price</th>
+                    <th>date from</th>
+                    <th>date to</th>
+                    <th>id client</th>
+                    <th>id room</th>
+                    <th>paid</th>
+            </tr>
+        </thead>
+        {{#each list}}
+            <tbody>
+                <tr class="row">
+                    {{#each this}}
+                        <td>{{this}}</td>
+                    {{/each}}
+                </tr>
+            </tbody>
+        {{/each}}
+    </table>
+    <div class="row">
+        <div  class="col-sm-5"></div>
+        <div  class="col-sm-7">
+            <h2>Sum: {{sum}}</h2>
+        </div>
+    </div>
+    {{else}}
+    No services are bought.
+{{/if}}
